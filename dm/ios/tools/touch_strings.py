@@ -51,8 +51,8 @@ TABLE = {
     },
 }
 
-# 英文列（英文版）：同一批键的 enUS 改成触摸说法；口径同上（空串 = 这句不要）。不在这里的键英文照原版。
-# 人物页「%s\n命中值」那两条是中文大字号排版问题，英文不动。西语两列见下面 ES / MX；别的语言列不改（我们自己的字只做中英西，别的语言按英文）
+# 英文列（英文版）：同一批键的 enUS 改成触摸说法；口径同上（空串 = 这句不要）。不在这里的键英文照原版。俄语列见下面 RU。
+# 人物页「%s\n命中值」那两条是中文大字号排版问题，英文不动。西语两列见下面 ES / MX；别的语言列不改（我们自己的字只做中英西俄，别的语言按英文）
 # 与中文表同一写法：原文只存校验（SHA-1 前 8 位），表里不存原版文字
 # English column (English version): enUS of the same set of keys changed to touch wording; same policy as above (empty string = drop this sentence). Keys not here keep the original English.
 # The two "%s + line break + 命中值 (Attack Rating)" entries on the character page are a large-font Chinese layout issue; English is left alone. Spanish columns in ES / MX below; other language columns unchanged (our own text is only Chinese, English and Spanish; other languages use English)
@@ -154,7 +154,40 @@ MX = {
         'MoviePlaybackHoldToSkip': ('a6b6a532', ''),
     },
 }
-EXTRA = (('enUS', EN), ('esES', ES), ('esMX', MX))   # 中文以外改的列 | Columns changed besides Chinese
+# 俄语列（俄语版）：同一批键的 ruRU 改成触摸说法，口径同英文（空串 = 这句不要）；原版俄文的原文校验各自单独存
+# Russian column (Russian version): ruRU of the same set of keys changed to touch wording, same policy as English (empty string = drop this sentence); each stores the check of the original Russian text
+RU = {
+    'ui-controller.json': {
+        'UseItemController': ('7474c613', 'Двойной тап — использовать'),
+        'OpenHoradricCubeController': ('b702fc29', 'Двойной тап — открыть'),
+        'ReadScrollController': ('1aca2594', 'Двойной тап — прочитать'),
+        'UsePotionOfLifeController': ('1fc240c4', 'Двойной тап — +20 к запасу здоровья'),
+        'UseBookOfSkillController': ('3230fdd2', 'Двойной тап — выучить умение'),
+        'UseScrollOfResistanceController': ('a21bc33d', 'Двойной тап — применить'),
+        'UseTokenOfAbsolutionController': ('62799712', 'Двойной тап — сбросить очки характеристик и умений'),
+        'UseTerrorTokenAct1Controller': ('767eaea7', 'Двойной тап — ввергнуть ужас в 1-й акт'),
+        'UseTerrorTokenAct2Controller': ('7e2b5ab4', 'Двойной тап — ввергнуть ужас во 2-й акт'),
+        'UseTerrorTokenAct3Controller': ('cbfd42bc', 'Двойной тап — ввергнуть ужас в 3-й акт'),
+        'UseTerrorTokenAct4Controller': ('5839a722', 'Двойной тап — ввергнуть ужас в 4-й акт'),
+        'UseTerrorTokenAct5Controller': ('f8700dbe', 'Двойной тап — ввергнуть ужас в 5-й акт'),
+        'comparisonTooltipController': ('0d40bbad', ''),
+        'hireComparisonTooltipController': ('f42afaf2', ''),
+        'StrYouDiedConsole': ('2bf9961e', 'Вы погибли'),
+        'ControllerInteractButton': ('54234e14', ''),
+        'ControllerTitleScreenPrompt': ('1b3b06b3', 'Коснитесь экрана, чтобы начать'),
+        'EnterCharacterName': ('74790c9d', ''),
+        'ControllerCycleComparisonTooltips': ('3f128d2b', 'Коснитесь снова, чтобы сравнить с другим'),
+        'SelectButtonNoteText': ('f2040580', ''),
+        'MoviePlaybackHoldToSkip_switch': ('08664e40', ''),
+    },
+    'ui.json': {
+        'LevelUpStatsNotificationController': ('96716426', 'Уровень повышен.'),
+        'LevelUpNotificationController': ('96716426', 'Уровень повышен.'),
+        'QuestLogNotificationController': ('aad0ef25', 'Задание обновлено.'),
+        'MoviePlaybackHoldToSkip': ('8f05e751', ''),
+    },
+}
+EXTRA = (('enUS', EN), ('esES', ES), ('esMX', MX), ('ruRU', RU))   # 中文以外改的列 | Columns changed besides Chinese
 
 # 手柄支持：手柄说法 ↔ 触摸说法按模式切，不再改字符串文件——build_sidecar 出旁路表，宿主触屏模式把串表里这几个键的串换成触摸说法、
 # 手柄模式换回原文（dm/host/dm_padmode.c）。只有下面这两条是排版用的（大字号，两种模式都要），照旧改文件
