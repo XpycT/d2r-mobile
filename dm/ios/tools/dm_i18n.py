@@ -46,14 +46,17 @@ def rows():
     out = []
     with open(TABLE, encoding='utf-8') as f:
         for r in csv.DictReader(f, delimiter='\t'):
-            k, zh, en = r['键'], r['中文'].replace('\\n', '\n'), r['English'].replace('\\n', '\n')
-            if not re.fullmatch(r'dm[A-Za-z0-9]+', k) or not zh or not en: raise SystemExit('dm_i18n：表里这一行不对：%r' % r)
-            if k not in EN_HAS_ZH and re.search(r'[　-鿿＀-￯]', re.sub(PROPER, '', en)): raise SystemExit('dm_i18n：%s 的英文里有中文字符：%r' % (k, en))
-            if FMT.findall(zh) != FMT.findall(en): raise SystemExit('dm_i18n：%s 的中英占位符不一致：%s / %s' % (k, FMT.findall(zh), FMT.findall(en)))
-            lim = next((n for pat, n in EN_LIMITS if re.fullmatch(pat, k)), None)   # 英文字数闸（见 EN_LIMITS） | English length gate (see EN_LIMITS)
-            if lim is not None and len(FMT.sub('000', en).split('\n')[0]) > lim: raise SystemExit('dm_i18n：%s 的英文「%s」%d 个字符，超过这一栏的上限 %d（会顶框 / 被截断；压短，或给这一栏做英文专用的小字号控件后再改上限）' % (k, en, len(FMT.sub('000', en)), lim))
-            out.append((k, zh, en))
-    ks = [k for k, _, _ in out]
+            k, zh, en, ru = r['键'], r['中文'].replace('\\n', '\n'), r['English'].replace('\\n', '\n'), r['Русский'].replace('\\n', '\n')
+            if not re.fullmatch(r'dm[A-Za-z0-9]+', k) or not zh or not en or not ru: raise SystemExit('dm_i18n：表里这一行不对：%r' % r)
+            for col, txt in (('英文', en), ('俄文', ru)):
+                if k not in EN_HAS_ZH and re.search(r'[　-鿿＀-￯]', re.sub(PROPER, '', txt)): raise SystemExit('dm_i18n：%s 的%s里有中文字符：%r' % (k, col, txt))
+            if FMT.findall(zh) != FMT.findall(en) or FMT.findall(ru) != FMT.findall(en): raise SystemExit('dm_i18n：%s 的中 / 英 / 俄占位符不一致：%s / %s / %s' % (k, FMT.findall(zh), FMT.findall(en), FMT.findall(ru)))
+            lim = next((n for pat, n in EN_LIMITS if re.fullmatch(pat, k)), None)   # 字数闸：三列同一套上限（按控件像素宽算出来，俄文比英文长，压不进就改词） | length gate: one set of limits for all three columns (derived from the widget's pixel width; Russian runs longer than English, so shorten the wording when it does not fit)
+            if lim is not None:
+                for col, txt in (('英文', en), ('俄文', ru)):
+                    if len(FMT.sub('000', txt).split('\n')[0]) > lim: raise SystemExit('dm_i18n：%s 的%s「%s」%d 个字符，超过这一栏的上限 %d（会顶框 / 被截断；压短，或给这一栏做专属的小字号控件后再改上限）' % (k, col, txt, len(FMT.sub('000', txt)), lim))
+            out.append((k, zh, en, ru))
+    ks = [k for k, _, _, _ in out]
     if len(set(ks)) != len(ks): raise SystemExit('dm_i18n：键重复：%s' % sorted({k for k in ks if ks.count(k) > 1}))
     return out
 
@@ -65,9 +68,9 @@ def build(romfs, outdir, repl):
     if prev: text = open(prev, encoding='utf-8-sig').read()
     have = set(re.findall(r'"Key":\s*"((?:[^"\\]|\\.)*)"', text))
     rs = rows()
-    clash = [k for k, _, _ in rs if k in have]
+    clash = [k for k, _, _, _ in rs if k in have]
     if clash: raise SystemExit('dm_i18n：键和原版重名：%s' % clash)
-    add = [{'id': ID0 + i, 'Key': k, **{l: (zh if l in ('zhCN', 'zhTW') else en) for l in LANGS}} for i, (k, zh, en) in enumerate(rs)]
+    add = [{'id': ID0 + i, 'Key': k, **{l: (zh if l in ('zhCN', 'zhTW') else (ru if l == 'ruRU' else en)) for l in LANGS}} for i, (k, zh, en, ru) in enumerate(rs)]
     end = text.rstrip().rindex(']')
     body = ',\n'.join('  ' + json.dumps(e, ensure_ascii=False) for e in add)
     text = text[:end].rstrip() + ',\n' + body + '\n' + text[end:]
@@ -79,8 +82,8 @@ def header():
     """dm/host/dm_i18n_tab.h 的内容（游戏外画的字用的编译期表）。 | Contents of dm/host/dm_i18n_tab.h (the compile-time table for text drawn outside the game)."""
     c = lambda s: json.dumps(s, ensure_ascii=False)   # JSON 串的转义在 C 里同样成立（\n \" \\） | JSON string escapes are equally valid in C (newline, double quote, backslash)
     out = ['// 生成文件，勿手改：python3 dm/ios/tools/dm_i18n.py --header > dm/host/dm_i18n_tab.h（表 dm/i18n/ui_text.tsv）', '#pragma once',
-           'static const struct { const char *k, *zh, *en; } k_dm_i18n[] = {']
-    out += ['    { %s, %s, %s },' % (c(k), c(zh), c(en)) for k, zh, en in rows()]
+           'static const struct { const char *k, *zh, *en, *ru; } k_dm_i18n[] = {']
+    out += ['    { %s, %s, %s, %s },' % (c(k), c(zh), c(en), c(ru)) for k, zh, en, ru in rows()]
     return '\n'.join(out + ['};', ''])
 
 if __name__ == '__main__':

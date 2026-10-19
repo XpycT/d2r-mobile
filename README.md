@@ -162,6 +162,8 @@ Most features can be toggled one by one in game under Options → Custom.
 
 The whole game switches between English and Chinese under Options → Custom; after a restart, both the interface and the voice acting are in the language you chose. In English, items, skills and monsters use the original Diablo II wording, and everything we added — Greater Rift, Chronicle, the settings page, controller prompts — is in English too.
 
+The original game's own list is back as well: Options → Sound → Text Language / Voice Language offers all 13 languages the game ships (Russian included), with that language's voice acting. Everything we added — the Custom page, the Greater Rift panel, the Chronicle, the dialogs — is translated into Chinese and Russian; in the other ten languages it shows English.
+
 <p align="center">
   <img src="https://github.com/jhaizhou-ops/d2r-mobile/releases/download/assets/en_game.jpg" width="58%" alt="Gameplay with the English interface">
   <img src="https://github.com/jhaizhou-ops/d2r-mobile/releases/download/assets/rift_panel_zh.jpg" width="40%" alt="The same Greater Rift panel in Chinese">

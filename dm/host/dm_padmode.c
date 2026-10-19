@@ -243,6 +243,12 @@ void dm_padmode_ident_hint(int on) { atomic_store(&g_hint[HINT_IDENT].on, on ? 3
 // own string), all recorded nodes / original texts are cleared, and after the reload the next round recognizes the new nodes again and runs the
 // check again.
 void dm_padmode_lang_reset(void) {
+    // 切语言也把整套界面重建了：前端靠这个计数把技能钮快照的 HUD 身份重新认（不认就一直是 UNKNOWN —— 技能钮上的图标退回 F1–F8 字样、
+    // 点它也不进绑定，因为判「空槽」用的是同一份读数）。原先只在手柄 / 触屏切换完成时加一，切语言不加
+    // A language switch rebuilds the whole UI as well: the front end uses this counter to re-identify the skill-button snapshot's HUD identity
+    // (without it the status stays UNKNOWN -- the skill buttons fall back to the F1-F8 labels and tapping one does not enter binding, because the
+    // "empty slot" decision reads the same value). It used to be incremented only when a controller / touch switch completed, not on a language switch
+    atomic_fetch_add(&g_rebuilds, 1);
     int back = 0;
     for (int i = 0; i < g_nstr; i++) { if (g_str[i].node && g_str[i].orig) { uint64_t *v = (uint64_t *)(uintptr_t)(g_str[i].node + 0x20); if (v[0] == (uint64_t)(uintptr_t)g_str[i].val) { v[0] = g_str[i].orig; v[1] = g_str[i].olen; back++; } }
         g_str[i].node = g_str[i].orig = g_str[i].olen = 0; }

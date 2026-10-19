@@ -2,32 +2,32 @@
 
 中文: [README.zh-CN.md](README.zh-CN.md)
 
-All UI text we added on top of the original game exists in Chinese and English and is registered in one table here; a scanning script makes sure no text bypasses that table. The game's own text is not handled here; it follows the game's own string tables.
+All UI text we added on top of the original game exists in Chinese, English and Russian and is registered in one table here; a scanning script makes sure no text bypasses that table. The game's own text is not handled here; it follows the game's own string tables.
 
 ## The three files
 
 | File | What it is |
 |---|---|
-| `ui_text.tsv` | The string table, the single source of the UI text we added. Four tab-separated columns: `键` (key), `中文` (Chinese), `English`, `用在哪` (where used) |
+| `ui_text.tsv` | The string table, the single source of the UI text we added. Five tab-separated columns: `键` (key), `中文` (Chinese), `English`, `Русский` (Russian), `用在哪` (where used) |
 | `scan_literals.py` | The literal gate: scans the sources for string literals containing Chinese and reports any that reach the screen without going through the table |
 | `literal_whitelist.tsv` | The gate's whitelist: Chinese literals that really never reach the screen are registered here. Three columns: `文件` (file), `匹配` (match), `理由` (reason) |
 
 The table is read by `dm/ios/tools/dm_i18n.py`, which does two things with it:
 
-- **Text drawn inside the game**: when the overlay is built, every row is appended to the game's string table, with Chinese in the Simplified and Traditional Chinese columns and English in all other languages. Layouts write `@key`, and the host fetches by key with `dm_str`. Switching language is done by the game itself.
-- **Text drawn outside the game** (system alerts, the resource download page and so on): it generates `dm/host/dm_i18n_tab.h`, which is compiled in and read by key with `dm_ui`.
+- **Text drawn inside the game**: when the overlay is built, every row is appended to the game's string table, with Chinese in the Simplified and Traditional Chinese columns, Russian in the `ruRU` column and English in the remaining ten languages. Layouts write `@key`, and the host fetches by key with `dm_str`. Switching language is done by the game itself.
+- **Text drawn outside the game** (system alerts, the resource download page and so on): it generates `dm/host/dm_i18n_tab.h`, which is compiled in and read by key with `dm_ui`, which picks one of three columns (Simplified / Traditional Chinese take Chinese, Russian takes Russian, everything else English).
 
 The lookup interface is in `dm/host/dm_i18n.h`.
 
 ## Adding a UI string
 
-1. Add a row to `ui_text.tsv` and fill in all four columns. The rules for the first three are enforced by `dm_i18n.py`, which stops with an error when one is broken:
+1. Add a row to `ui_text.tsv` and fill in all five columns. The rules for the three text columns are enforced by `dm_i18n.py`, which stops with an error when one is broken:
 
    - The key starts with `dm` followed by letters and digits only, no underscore (`@key` in a layout breaks at an underscore). Keys must be unique and must not clash with a key of the original game.
-   - Neither the Chinese nor the English may be empty. The English may not contain Chinese characters.
-   - Placeholders (`%d`, `%s` and so on) must match between the two columns in number, order and type.
+   - None of the three text columns may be empty. The English and the Russian may not contain Chinese characters (the language-row keys are an exception, see `EN_HAS_ZH`).
+   - Placeholders (`%d`, `%s` and so on) must match across all three columns in number, order and type.
    - For a line break, write the two characters `\n`.
-   - Some keys (the Rift panel, Rift messages and others) have a length limit on the English; exceeding it reports what the limit is. The limits are `EN_LIMITS` in `dm_i18n.py`. Character count is only an approximation, so new English wording still needs a look at a screenshot to see that it stays inside its box.
+   - Some keys (the Rift panel, Rift messages and others) have a length limit; exceeding it reports what the limit is. The limits are `EN_LIMITS` in `dm_i18n.py` and the same numbers apply to all three columns (they come from the widget's pixel width, and Russian runs longer than English, so shorten the wording when it does not fit). Character count is only an approximation, so new wording still needs a look at a screenshot to see that it stays inside its box.
    - The "where used" column is not checked by any script. Existing rows say which screen the text appears on, which file uses it, and what each placeholder stands for; do the same.
 
 2. Regenerate the header and commit it together with the table:

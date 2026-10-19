@@ -162,6 +162,8 @@ La mayoría de las funciones se pueden activar o desactivar una por una en el ju
 
 Todo el juego cambia entre inglés y chino en Options → Custom; tras reiniciar, tanto la interfaz como las voces están en el idioma que elegiste. En inglés, los objetos, las habilidades y los monstruos usan la terminología original de Diablo II, y todo lo que añadimos —Greater Rift, Chronicle, la página de ajustes, las indicaciones del mando— también está en inglés.
 
+La lista propia del juego original también vuelve a estar: Options → Sound → Text Language / Voice Language ofrece los 13 idiomas que trae el juego (ruso incluido), con el doblaje de ese idioma. Todo lo que añadimos nosotros —la página Custom, el panel de Greater Rift, la Chronicle, los avisos— está traducido al chino y al ruso; en los otros diez idiomas se muestra en inglés.
+
 <p align="center">
   <img src="https://github.com/jhaizhou-ops/d2r-mobile/releases/download/assets/en_game.jpg" width="58%" alt="Partida con la interfaz en inglés">
   <img src="https://github.com/jhaizhou-ops/d2r-mobile/releases/download/assets/rift_panel_zh.jpg" width="40%" alt="El mismo panel de la Greater Rift en chino">

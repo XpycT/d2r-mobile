@@ -390,9 +390,17 @@ static void settings_lang_apply(const char *save_dir) {
     char path[1200]; snprintf(path, sizeof path, "%s/Settings/Settings.json", save_dir); static char buf[66000]; FILE *f = fopen(path, "rb"); if (!f) return;
     size_t n = fread(buf, 1, 65535, f); fclose(f); if (n == 65535) return; buf[n] = 0;
     const char *k = strstr(buf, "\"Language\""), *c = k ? strchr(k + 10, ':') : NULL; int cur = c ? atoi(c + 1) : 8;   // 没写 = 游戏缺省（宿主报简中） | Not written = game default (the host reports Simplified Chinese)
-    if ((en && cur == 0) || (!en && cur != 0)) { const char *vk = strstr(buf, "\"VoiceLanguage\""), *vc = vk ? strchr(vk + 15, ':') : NULL; int vcur = vc ? atoi(vc + 1) : cur;
-        if ((en && vcur == 0) || (!en && vcur != 0)) return; }   // 文字、语音都已与开关相符 | Text and voice already match the switch
-    int want = en ? 0 : 8, ch = json_int_set(buf, sizeof buf, "\"Language\"", want) | json_int_set(buf, sizeof buf, "\"VoiceLanguage\"", want); if (!ch) return;
+    // 语言开关只管它自己那两档（0 英文 / 8 简中）：玩家在原版「文字语言」里选的别的语言（繁中、俄文、德文……）一律不动——
+    // 开关没有点过应用时 en = -1 已经早退，点过之后也不能把原版里刚选好的语言改回去（俄文 7、繁中 9 都是这样被还原成英文的）
+    // The switch owns only its own two values (0 English / 8 Simplified Chinese): any other language the player picked in the original game's
+    // 「文字语言」(Text Language) is left alone (Traditional, Russian, German, ...). When Apply was never tapped en = -1 returns early above; once it
+    // has been tapped it must still not undo a language the player has just chosen in the original game (that is how Russian 7 and Traditional 9 were
+    // being reverted to English)
+    if (cur != 0 && cur != 8) return;
+    int want = en ? 0 : 8;
+    const char *vk = strstr(buf, "\"VoiceLanguage\""), *vc = vk ? strchr(vk + 15, ':') : NULL; int vcur = vc ? atoi(vc + 1) : want;
+    if (cur == want && vcur == want) return;   // 文字、语音都已经是开关要的那一档 | Text and voice are already the value the switch wants
+    int ch = json_int_set(buf, sizeof buf, "\"Language\"", want) | json_int_set(buf, sizeof buf, "\"VoiceLanguage\"", want); if (!ch) return;
     char tmp[1300]; snprintf(tmp, sizeof tmp, "%s.lang", path); f = fopen(tmp, "wb"); size_t m = strlen(buf);
     if (!f || fwrite(buf, 1, m, f) != m) { if (f) fclose(f); LOG("【红】语言开关：写 %s 失败", tmp); return; }
     fclose(f); if (rename(tmp, path)) { LOG("【红】语言开关：改名到 %s 失败", path); return; }

@@ -39,7 +39,7 @@ Double-click the App. The first launch asks you to choose the **game resource fo
 
 A key reference is then shown once; afterwards it is under Help in the menu bar.
 
-Language: the first launch follows the system language (Chinese systems start in Chinese, everything else in English). To change it: Options → Custom, the language switch in the first row → Accept All → close and reopen the App.
+Language: the first launch follows the system language (Chinese systems start in Chinese, everything else in English). To change it: Options → Custom, the language switch in the first row → Accept All → close and reopen the App. The original game's own list is there too — Options → Sound → Text Language / Voice Language, all 13 languages it ships (Russian included), and that language's voice acting; what we added is translated into Chinese and Russian and shows English in the other ten.
 
 ## Keyboard ↔ gamepad
 

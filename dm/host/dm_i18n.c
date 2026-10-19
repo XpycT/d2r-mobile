@@ -1,23 +1,23 @@
-// 我们自己加的界面文字取串（英文版：语言跟原版设置走，简中以外一律英文；物品注释 / 旧译名英文下不显示）。
-// 唯一来源 dm/i18n/ui_text.tsv（键 / 中文 / English / 用在哪），dm/ios/tools/dm_i18n.py 用它做两件事：
-//   · 追加进原版字符串表 ui.json（RomFS 覆盖层）：zhCN 列 = 中文、其余 12 列 = 英文。布局写「@键」、宿主 dm_str 走原版取串 main+0x7f5630，
+// 我们自己加的界面文字取串（三语：中文 / 英文 / 俄文；语言跟原版设置走，其余语言用英文；物品注释 / 旧译名只在简中下显示）。
+// 唯一来源 dm/i18n/ui_text.tsv（键 / 中文 / English / Русский / 用在哪），dm/ios/tools/dm_i18n.py 用它做两件事：
+//   · 追加进原版字符串表 ui.json（RomFS 覆盖层）：zhCN、zhTW 列 = 中文，ruRU 列 = 俄文，其余 10 列 = 英文。布局写「@键」、宿主 dm_str 走原版取串 main+0x7f5630，
 //     切语言时原版自己清空 + 重装字符串表（SetLanguage 0x317298，r34 起不剪），不用我们跟。
-//   · 生成 dm_i18n_tab.h（本文件编进去）：游戏画不到的地方（UIKit 弹框、资源下载页、分享文件名、底栏字形）按 dm_lang_zh() 取。
+//   · 生成 dm_i18n_tab.h（本文件编进去）：游戏画不到的地方（UIKit 弹框、资源下载页、分享文件名、底栏字形）按 dm_ui 取三列之一。
 // 语言：游戏设过（SetLanguage 观测门）就以它为准；之前（资源下载页、进前端前）读存档 Settings/Settings.json 的 "Language"；
-//   没有设置文件 = 首次安装，按 iOS 系统语言（dm_sys_lang）。我们的字：简中、繁体用中文，其余英文。
-// String lookup for the UI text we added ourselves (English version: the language follows the original game's setting, and everything other than
-// Simplified Chinese is English; item notes / legacy translated names are not shown in English).
-// Single source: dm/i18n/ui_text.tsv (key / Chinese / English / where used); dm/ios/tools/dm_i18n.py does two things with it:
-//   - Appends it to the original string table ui.json (RomFS overlay): zhCN column = Chinese, the other 12 columns = English. Layouts write "@key", and
-//   the host's dm_str goes through the original string lookup at main+0x7f5630;
+//   没有设置文件 = 首次安装，按 iOS 系统语言（dm_sys_lang）。我们的字：简中、繁体用中文，俄文（语言号 7）用俄文，其余英文。
+// String lookup for the UI text we added ourselves (three languages: Chinese / English / Russian; the language follows the original game's
+// setting, and the rest fall back to English; item notes / legacy translated names are shown in Simplified Chinese only).
+// Single source: dm/i18n/ui_text.tsv (key / Chinese / English / Русский / where used); dm/ios/tools/dm_i18n.py does two things with it:
+//   - Appends it to the original string table ui.json (RomFS overlay): zhCN and zhTW = Chinese, ruRU = Russian, the other 10 columns = English.
+//     Layouts write "@key", and the host's dm_str goes through the original string lookup at main+0x7f5630;
 //     on a language switch the original game clears and reloads the string tables itself (SetLanguage 0x317298, no longer patched out as of r34), so we
 //     do not have to follow it.
 //   - Generates dm_i18n_tab.h (compiled into this file): places the game cannot draw (UIKit alerts, the asset download page, shared file names,
-//   bottom-bar glyphs) pick by dm_lang_zh().
+//     bottom-bar glyphs) pick one of the three columns in dm_ui.
 // Language: once the game has set it (SetLanguage observation gate), that value wins; before that (asset download page, before entering the front end)
 // read "Language" from Settings/Settings.json in the save data;
-//   no settings file = first install, use the iOS system language (dm_sys_lang). Our text: Chinese for Simplified and Traditional Chinese, English for
-//   everything else.
+//   no settings file = first install, use the iOS system language (dm_sys_lang). Our text: Chinese for Simplified and Traditional Chinese, Russian for
+//   Russian (language index 7), English for everything else.
 #include "dm_i18n.h"
 #include "dm_i18n_tab.h"
 #include <TargetConditionals.h>
@@ -81,7 +81,8 @@ int dm_lang_index(void) {
 int dm_lang_zh(void) { int l = dm_lang_index(); return l == 8 || l == 9; }   // 繁体（zhTW）我们的字也用简中（繁体玩家读简体比读英文顺） | for Traditional Chinese (zhTW) our text also uses Simplified Chinese (Traditional Chinese players read Simplified more easily than English)
 
 const char *dm_ui(const char *key) {
-    for (unsigned i = 0; i < sizeof k_dm_i18n / sizeof *k_dm_i18n; i++) if (!strcmp(k_dm_i18n[i].k, key)) return dm_lang_zh() ? k_dm_i18n[i].zh : k_dm_i18n[i].en;
+    int col = dm_lang_index() == 7 ? 2 : (dm_lang_zh() ? 0 : 1);   // 三列：0 中文（简中 / 繁体）、1 英文、2 俄文（语言号 7，原版声音页轮播的顺序） | three columns: 0 Chinese (Simplified / Traditional), 1 English, 2 Russian (language index 7, the carousel order on the original sound page)
+    for (unsigned i = 0; i < sizeof k_dm_i18n / sizeof *k_dm_i18n; i++) if (!strcmp(k_dm_i18n[i].k, key)) return col == 0 ? k_dm_i18n[i].zh : col == 1 ? k_dm_i18n[i].en : k_dm_i18n[i].ru;
     return key;
 }
 

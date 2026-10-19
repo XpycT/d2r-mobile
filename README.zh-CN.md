@@ -162,6 +162,8 @@ iPhone 与 iPad 共用一个安装包。
 
 整个游戏可在「选项 → 自定义」里切换为英文，重启后界面与语音都是英文：物品、技能、怪物名沿用原版英文，我们新增的内容——秘境、编年史、设置页、手柄提示——也全部配了英文。
 
+原版自己的开关也放回来了：「选项 → 声音 → 文字语言 / 语音语言」可选原版自带的 13 种语言（含俄文），语音跟着切；我们新增的内容——自定义页、秘境面板、编年史、各种提示——都配了中文和俄文两套，其余十种语言下显示英文。
+
 <p align="center">
   <img src="https://github.com/jhaizhou-ops/d2r-mobile/releases/download/assets/en_game.jpg" width="58%" alt="英文界面下的游戏画面">
   <img src="https://github.com/jhaizhou-ops/d2r-mobile/releases/download/assets/en_panel.jpg" width="40%" alt="英文的秘境面板">

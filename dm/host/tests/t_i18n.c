@@ -36,6 +36,7 @@ int main(int argc, char **argv) {
         expect("游戏没设前按设置文件", dm_ui("dmConfirm"), "OK");
         atomic_store(&g_dm_lang, 8); expect("游戏切到 zhCN", dm_ui("dmConfirm"), "确定");
         atomic_store(&g_dm_lang, 9); expect("游戏切到 zhTW（繁体用中文）", dm_ui("dmConfirm"), "确定");
+        atomic_store(&g_dm_lang, 7); expect("游戏切到 ruRU（用俄文）", dm_ui("dmCancel"), "Отмена");
         atomic_store(&g_dm_lang, 1); expect("游戏切到 deDE（按英文）", dm_ui("dmConfirm"), "OK");
         expect("表里没有的键原样返回", dm_ui("dmNoSuchKey"), "dmNoSuchKey"); }
     else { fprintf(stderr, "用法：t_i18n en|zh|none|sysen|systw|tags|game\n"); return 2; }

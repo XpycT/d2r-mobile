@@ -89,7 +89,8 @@ def main():
         label(zh, col, font).save(os.path.join(OUT, 'label_%d.png' % i))
         if zo != zh: label(zo, col, font).save(os.path.join(OUT, 'label_%d_old.png' % i))   # 旧译名不同才出（前端没有 _old 就用 label_<序号>） | Only emitted when the old translated name differs (without _old the front end uses label_<index>)
         en = cache[f][key]['enUS']; label(en, col, font).save(os.path.join(OUT, 'label_%d_en.png' % i))   # 英文版：原版 enUS 名字，游戏语言不是简中时前端用它 | English version: the original enUS name, used by the front end when the game language is not Simplified Chinese
-        man.append({'id': i, 'file': f, 'key': key, 'zhCN': zh, 'old': zo, 'enUS': en, 'color': list(col)})
+        ru = cache[f][key]['ruRU']; label(ru, col, font).save(os.path.join(OUT, 'label_%d_ru.png' % i))   # 俄文版：原版 ruRU 名字，游戏语言是俄文（语言号 7）时前端用它 | Russian: the original ruRU name, used by the front end when the game language is Russian (index 7)
+        man.append({'id': i, 'file': f, 'key': key, 'zhCN': zh, 'old': zo, 'enUS': en, 'ruRU': ru, 'color': list(col)})
     json.dump({'text_px': TEXT_PX, 'symbol_frames': 7, 'labels': man}, open(os.path.join(OUT, 'mapgoal.json'), 'w'), ensure_ascii=False, indent=1)
     print('mapgoal：符号 7 帧、十字 1、名牌 %d（旧译名不同的 %d）→ %s' % (len(man), sum(m['old'] != m['zhCN'] for m in man), OUT))
 

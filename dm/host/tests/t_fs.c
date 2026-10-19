@@ -192,7 +192,9 @@ int main(void) {
       LANGCASE(0, "{ \"Language\": 9, \"VoiceLanguage\": 9 }", "{ \"Language\": 9, \"VoiceLanguage\": 9 }", "开关 = 中文、玩家在原版里选了繁中：不改回简中");
       LANGCASE(1, "{ \"Language\": 0, \"VoiceLanguage\": 0 }", "{ \"Language\": 0, \"VoiceLanguage\": 0 }", "开关 = 英文、文件已是英文：不动");
       LANGCASE(1, "{ \"Language\": 0, \"VoiceLanguage\": 8 }", "{ \"Language\": 0, \"VoiceLanguage\": 0 }", "开关 = 英文、文字已英文但语音还是中文：语音跟上");
-      LANGCASE(1, "{ \"Language\": 12 }", "{\n    \"VoiceLanguage\": 0, \"Language\": 0 }", "开关 = 英文、两位数的语言号且没有语音键：改写并补上语音键");
+      LANGCASE(1, "{ \"Language\": 8 }", "{\n    \"VoiceLanguage\": 0, \"Language\": 0 }", "开关 = 英文、文件是简中且没有语音键：改写并补上语音键");
+      LANGCASE(1, "{ \"Language\": 12 }", "{ \"Language\": 12 }", "开关 = 英文、玩家在原版里选了别的语言（两位数）：一个字不动");
+      LANGCASE(0, "{ \"Language\": 7, \"VoiceLanguage\": 7 }", "{ \"Language\": 7, \"VoiceLanguage\": 7 }", "开关 = 中文、玩家在原版里选了俄文：不改回简中");
       g_t_lang = -1; }
 
     char cmd[1200]; snprintf(cmd, sizeof cmd, "rm -rf '%s'", root); system(cmd);

@@ -1176,15 +1176,15 @@ def _drop_rows(*rows):
 # the video page's table is replaced entirely with our rows: section header + one original-game checkbox per switch (following the fields of the 「自动拾取金币」(Auto Gold Pickup) row on the 「游戏」(Game) page). Widget names are TouchCustom_<key>,
 # and the host dm_custom.c reads whether each is checked and handles apply / discard / default. The checkbox message sends a harmless ClosePanel (same as 「极乐世界」(Elysium)), which the game does not recognize
 _CUSTOM_KEYS = ('auto_mana', 'merc_pot', 'drop_light', 'map_mark', 'item_notes', 'icloud', 'pot_pick', 'drop_haptic', 'gem_pick', 'store_btn', 'eco_fps', 'q3d', 'loot_filter', 'auto_buff', 'touch_swap_above')
-# 字在中英表（dm/i18n/ui_text.tsv 的 dmCustom<键名驼峰>），布局写 @键、跟原版语言走（英文版）；行高按中文行数分，英文必须同样行数（不然换语言排版变）
-# The text lives in the Chinese-English string table (dmCustom<key name in camel case> in dm/i18n/ui_text.tsv); layouts write @key and follow the
-# original game's language (English version); row height is assigned by the number of Chinese lines, and English must have the same number of lines
+# 字在三语表（dm/i18n/ui_text.tsv 的 dmCustom<键名驼峰>），布局写 @键、跟原版语言走；行高按中文行数分，英文 / 俄文必须同样行数（不然换语言排版变）
+# The text lives in the three-language table (dmCustom<key name in camel case> in dm/i18n/ui_text.tsv); layouts write @key and follow the
+# original game's language; row height is assigned by the number of Chinese lines, and English / Russian must have the same number of lines
 # (otherwise the layout changes with the language)
 def _custom_key(key): return 'dmCustom' + ''.join(w.capitalize() for w in key.split('_'))   # auto_mana → dmCustomAutoMana（布局里 @键 遇下划线就断，键名不能带 _） | auto_mana → dmCustomAutoMana (in layouts @key stops at an underscore, so key names cannot contain _)
 def _custom_label(key):
     import dm_i18n
-    t = {k: (zh, en) for k, zh, en in dm_i18n.rows()}[_custom_key(key)]
-    if t[0].count('\n') != t[1].count('\n'): raise SystemExit('touch_layout：自定义页 %s 的中英行数不同：%r / %r' % (key, t[0], t[1]))
+    t = {k: (zh, en, ru) for k, zh, en, ru in dm_i18n.rows()}[_custom_key(key)]
+    if len({x.count('\n') for x in t}) != 1: raise SystemExit('touch_layout：自定义页 %s 的中 / 英 / 俄行数不同：%r / %r / %r' % ((key,) + t))
     return t[0]
 _CUSTOM_ROWS = tuple((k, '@' + _custom_key(k)) for k in _CUSTOM_KEYS)
 # 视频页的类会把它不认识的表格行整行隐藏（控件树：我们的行 +0x50 = 0，只剩没有勾选框的标题行可见），所以各行不进表格；
@@ -1322,11 +1322,15 @@ def _modal_prompt(old, new):
 PRESENT['confirmationmodalhd.json'] = _modal_prompt('"rect": { "x": 78, "y": 85, "width": 1076, "height": 170 },', '"rect": { "x": 78, "y": 28, "width": 1076, "height": 264 },')
 PRESENT['dismissablemodalhd.json'] = _modal_prompt('"rect": { "x": 140, "y": 70, "width": 966, "height": 212 },', '"rect": { "x": 140, "y": 28, "width": 966, "height": 264 },')
 PRESENT['controller/settingspanelhd.json'] = _settings_no_legend
-# 去掉的项：语言只留简中、手柄专用、联网、离线人数（只留底栏难度格一个入口）
-# 英文版：r34 起原版切语言不再剪；「语言」分节与「文字语言」一行仍藏，等我们自己的文字进中英表（第二阶段）一起放出（切到英文看到一半中文不行）
-# Removed items: language keeps only Simplified Chinese, controller-only items, online, offline player count (only the difficulty cell in the bottom bar remains as the single entry)
-# English version: since r34 the original game's language switch is no longer cut; the 「语言」(Language) section and the 「文字语言」(Text Language) row stay hidden until our own text enters the Chinese-English table (phase two) and are released together (switching to English and seeing half Chinese is not acceptable)
-PRESENT['soundoptionspanelhd.json'] = _drop_rows('LanguageOptions', 'VoiceLanguage', 'TextLanguage', 'Controller Feedback')
+# 去掉的项：手柄专用、联网、离线人数（只留底栏难度格一个入口）。「语言」分节与「文字语言」「语音语言」两行留着 —
+# 原版自带 13 种语言的串表和语音，r34 起切语言也不再剪（SetLanguage 观测门 5）；我们自己的字只有中英两套，
+# 选了别的语言时我们加的字显示英文（dm_i18n.py 把其余语言列写成英文），这是可接受的取舍
+# Removed items: controller-only items, online, offline player count (only the difficulty cell in the bottom bar remains as the single entry).
+# The 「语言」(Language) section and the 「文字语言」(Text Language) / 「语音语言」(Voice Language) rows stay -- the original game ships
+# string tables and voice for all 13 languages, and since r34 the language switch is no longer cut (SetLanguage, observation gate 5); our own
+# text exists only in Chinese and English, so in any other language the text we added shows English (dm_i18n.py writes the other language
+# columns as English), which is an accepted trade-off
+PRESENT['soundoptionspanelhd.json'] = _drop_rows('Controller Feedback')
 PRESENT['gameplayoptionspanelhd.json'] = _drop_rows('AutoPartyInvite', 'ItemHotkeyTooltipAppender', 'ChatFontSize', 'ChatBackground', 'Controller Options', 'ControllerCursorSpeed',
                                                     'ControllerWeaponSwapSeparateBindings', 'ControllerRumbleEnabled', 'ControllerSwapThumbsticks', 'ShowParty', 'ShowNames', 'ShowRoomName',
                                                     # 大字体模式（原版低视力档）：一应用游戏就换成另一份界面布局档（_profileLV）整套重建，那份档我们没做过触摸布局——
@@ -1340,12 +1344,12 @@ PRESENT['gameplayoptionspanelhd.json'] = _drop_rows('AutoPartyInvite', 'ItemHotk
                                                     # This row has only the two characters 「色盲」(Color Blind) plus this button, so the whole row is removed (colorblind mode and strength are both on that page, and the settings table has no other colorblind row)
                                                     'ColorBlindCalibration')
 PRESENT['onlinegameoptionspanelhd.json'] = _drop_rows('OfflineDifficultyScaling', 'OfflineSettingsEffectNote')
-# 手柄模式的三份选项页（放在原路径，手柄模式加载；触屏那份由生成器挪到触屏这边）：原版删去两种模式都不支持的行——语言、联机、聊天、键鼠热键提示、离线人数档，
-# 和大字体模式（一应用就换成另一套布局档，再碰屏切回触屏会坏）。手柄模式比触屏多留的行见下
-# The three options pages for controller mode (placed at the original path and loaded by controller mode; the touch copy is moved to the touch side by the generator): the original with the rows that neither mode supports removed -- language, online, chat, keyboard-and-mouse hotkey hints, offline /players setting,
-# and large font mode (applying it swaps in another set of layout profiles, and touching the screen to switch back to touch then breaks). The rows controller mode keeps beyond touch are listed below
+# 手柄模式的三份选项页（放在原路径，手柄模式加载；触屏那份由生成器挪到触屏这边）：原版删去两种模式都不支持的行——联机、聊天、键鼠热键提示、离线人数档，
+# 和大字体模式（一应用就换成另一套布局档，再碰屏切回触屏会坏）。语言分节两种模式都留着（同触屏那份）。手柄模式比触屏多留的行见下
+# The three options pages for controller mode (placed at the original path and loaded by controller mode; the touch copy is moved to the touch side by the generator): the original with the rows that neither mode supports removed -- online, chat, keyboard-and-mouse hotkey hints, offline /players setting,
+# and large font mode (applying it swaps in another set of layout profiles, and touching the screen to switch back to touch then breaks). The language section stays in both modes (same as the touch copy). The rows controller mode keeps beyond touch are listed below
 PAD_ROOT = {
-    'soundoptionspanelhd.json': _drop_rows('LanguageOptions', 'VoiceLanguage', 'TextLanguage', 'Controller Feedback'),
+    'soundoptionspanelhd.json': _drop_rows('Controller Feedback'),
     # 手柄设置里只恢复实跑证实生效的：「互换左右摇杆」（开了之后左摇杆不走路、右摇杆走路）；色盲校准（手柄能进能出）。
     # 不恢复：震动（宿主不支持震动，hle_hid.c 里是空实现）、手柄反馈与光标速度（改了值、没量出效果：面板里手柄光标是按格吸附的）、切换武器分开绑定（没验）
     # Of the controller settings only those confirmed effective in actual runs are restored: 「互换左右摇杆」(Swap Sticks) (when on, the left stick no longer walks and the right stick does); colorblind calibration (the controller can get in and out).
