@@ -69,7 +69,7 @@ dmCustomAutoMana	自动喝药（生命 <50%、法力 <30%）	Auto-drink (Life 50
 dmCustomMercPot	佣兵自动喂药（生命 <50%，多耗药）	Auto-feed Merc at Life <50%	Curar mercenario si vida <50%		Зелье наёмнику при жизни <50%	自定义页开关
 dmCustomDropLight	高价值掉落光柱	Light beam on valuable drops	Haz de luz en botín valioso		Луч света на ценных дропах	自定义页开关
 dmCustomMapMark	小地图标注出入口、小站与任务终点	Automap: exits, waypoints, quests	Mapa: salidas, transportadores, búsquedas	Automapa: salidas, traslocadores, gestas	Карта: выходы, точки пути, квесты	自定义页开关；英文用原版词 keybinds[CfgAutoMap]「Automap」、objects[Waypoint]
-dmCustomItemNotes	物品注释与旧译名（重启后生效）	Item notes (Chinese/Spanish only, restart)	Notas de objetos (reinicia)		Пометки к предметам (кит., рестарт)	自定义页开关（英文下注释不显示）
+dmCustomItemNotes	物品注释与旧译名（重启后生效）	Item notes (Chinese/Spanish only, restart)	Notas de objetos (reinicia)		Пометки к предметам (кит./исп., рестарт)	自定义页开关（英文下注释不显示）
 dmCustomIcloud	iCloud 同步存档（重启后生效）	iCloud save sync (after restart)	Sincronía iCloud (tras reiniciar)		Синхронизация iCloud (рестарт)	自定义页开关
 dmCustomPotPick	腰带有空位时自动拾取能放进去的药水	Auto-pick potions into belt	Recoger pociones al cinturón	Recolectar pociones al cinturón	Зелья в пояс автоматически	自定义页开关
 dmCustomDropHaptic	高价值物品掉落时震动	Vibrate on valuable drops	Vibrar con botín valioso		Вибрация на ценных дропах	自定义页开关
@@ -82,7 +82,7 @@ dmCustomQ3dQuality	画质优先	Quality first	Calidad primero		Качество 
 dmCustomQ3dQualityHint	始终保持设定的 3D 清晰度	Always keeps the set 3D resolution	Mantiene siempre la resolución 3D elegida		Всегда держит заданное 3D-разрешение	画质优先下面的说明小字
 dmCustomLootFilter	掉落过滤（噩梦起自动隐藏杂物）	Loot Filter (auto, Nightmare+)	Filtro de botín (auto, Pesadilla+)		Фильтр лута (авто, Кошмар+)	自定义页开关；Loot Filter 是原版过滤器的英文名
 dmCustomAutoBuff	自动补上增益技能（站着不动时）	Auto-recast buffs when idle	Renovar mejoras al estar quieto		Автоперекаст бафов в покое	自定义页开关
-dmCustomLang	语言 / Language	语言 / Language	语言 / Idioma		Язык / Language	自定义页语言那一行的标签。两种界面写同样的中英两个词：这一行的文字控件指定原版的全球字体 BlizzardGlobal（英文界面缺省的 Formal 字体没有汉字，全球字体有；原版标题页、队伍名、合规提示同样按控件指定它）
+dmCustomLang	语言	Language	Idioma		Язык	自定义页语言那一行的标签。两种界面写同样的中英两个词：这一行的文字控件指定原版的全球字体 BlizzardGlobal（英文界面缺省的 Formal 字体没有汉字，全球字体有；原版标题页、队伍名、合规提示同样按控件指定它）
 dmCustomLangZh	中文	中文	中文		中文	语言行的选项一（两种界面都写「中文」，同上用全球字体）
 dmCustomLangEnOpt	English	English	English		English	语言行的选项二
 dmCustomLangEsOpt	Español	Español	Español		Español	语言行的选项三（各语言都写「Español」，同上用全球字体）

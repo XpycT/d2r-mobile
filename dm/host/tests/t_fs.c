@@ -200,12 +200,12 @@ int main(void) {
       LANGCASE(2, "{ \"Language\": 2, \"VoiceLanguage\": 2 }", "{ \"Language\": 2, \"VoiceLanguage\": 0 }", "开关 = 西语、语音是不在包里的西语配音：语音改英文");
       LANGCASE(1, "{ \"Language\": 2, \"VoiceLanguage\": 0 }", "{ \"Language\": 0, \"VoiceLanguage\": 0 }", "开关 = 英文、文件是西语：文字改英文");
       LANGCASE(0, "{ \"Language\": 10, \"VoiceLanguage\": 0 }", "{ \"Language\": 8, \"VoiceLanguage\": 8 }", "开关 = 中文、文件是拉美西语：都改成 8");
-      // 俄语（开关 = 3）：原版只有一种俄文 = 7 ruRU，配音按 voice_for 走英文；已经是俄文就不动
-      // Russian (switch = 3): the original has a single Russian = 7 ruRU, voice follows voice_for (English); already Russian = untouched
-      LANGCASE(3, "{ \"Language\": 0, \"VoiceLanguage\": 0 }", "{ \"Language\": 7, \"VoiceLanguage\": 0 }", "开关 = 俄语、文件是英文：文字 ruRU、语音英文");
-      LANGCASE(3, "{ \"Language\": 7, \"VoiceLanguage\": 7 }", "{ \"Language\": 7, \"VoiceLanguage\": 0 }", "开关 = 俄语、文件已是俄文：文字不动、不在包里的俄语配音改英文");
-      LANGCASE(3, "{ \"Language\": 7, \"VoiceLanguage\": 0 }", "{ \"Language\": 7, \"VoiceLanguage\": 0 }", "开关 = 俄语、文件已是俄文配英文语音：不动");
-      LANGCASE(1, "{ \"Language\": 7, \"VoiceLanguage\": 0 }", "{ \"Language\": 0, \"VoiceLanguage\": 0 }", "开关 = 英文、文件是俄文：文字改英文");
+      // 俄语（开关 = 3）：原版只有一种俄文 = 7 ruRU，语音也有俄语（locales/audio/ruRU 在游戏数据里），所以文字与语音一起改；已在俄语就不动
+      // Russian (switch = 3): a single Russian text = 7 ruRU, and the Russian voice tracks exist in the game data (locales/audio/ruRU), so text and voice are changed together; already Russian = untouched
+      LANGCASE(3, "{ \"Language\": 0, \"VoiceLanguage\": 0 }", "{ \"Language\": 7, \"VoiceLanguage\": 7 }", "开关 = 俄语、文件是英文：文字与语音都改成 ruRU");
+      LANGCASE(3, "{ \"Language\": 7, \"VoiceLanguage\": 7 }", "{ \"Language\": 7, \"VoiceLanguage\": 7 }", "开关 = 俄语、文件已是俄文配俄语语音：不动");
+      LANGCASE(3, "{ \"Language\": 7, \"VoiceLanguage\": 0 }", "{ \"Language\": 7, \"VoiceLanguage\": 7 }", "开关 = 俄语、文件是俄文配英文语音：语音跟上");
+      LANGCASE(1, "{ \"Language\": 7, \"VoiceLanguage\": 7 }", "{ \"Language\": 0, \"VoiceLanguage\": 0 }", "开关 = 英文、文件是俄文：文字与语音都改英文");
       g_t_lang = -1; }
 
     char cmd[1200]; snprintf(cmd, sizeof cmd, "rm -rf '%s'", root); system(cmd);

@@ -41,7 +41,7 @@ x = []
 for key, cap, _ in opts:
     t = nodes['TouchCustomLang%s_Text' % cap]['fields']['rect']
     b = nodes['TouchCustom_lang_' + key]['fields']['rect']
-    assert t['width'] >= 120, (key, t)
+    assert t['width'] >= 195, (key, t)   # 180 宽时 English / Español / Русский 折成「Englis h」（真机截图） | at 180 wide they wrapped into "Englis h" (device screenshot)
     assert t['x'] + t['width'] <= b['x'], (key, t, b)
     x.append(t['x'])
 assert x == sorted(x) and len(set(x)) == 4, x

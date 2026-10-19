@@ -347,11 +347,14 @@ static void low_vision_off(const char *save_dir) {
     char tmp[1210]; snprintf(tmp, sizeof tmp, "%s.tmp", path); f = fopen(tmp, "wb"); if (!f) return; int ok = fwrite(buf, 1, n, f) == n; ok = fclose(f) == 0 && ok;
     if (ok && !rename(tmp, path)) LOG("设置兜底：「大字体」（Low Vision Mode）是开着的，已改回关"); else remove(tmp);
 }
-// 语音语言跟着文字语言走，但只有简中与英文的配音在资源包里（出包裁掉了其余 11 种语言的配音分块 06–16，dm/ios/tools/testflight.sh、romfs_validate.c）：
-// 简中（8）配简中配音，其余一律英文配音（0）——西语文字配英文配音
-// Voice language follows text language, but only Simplified Chinese and English voice-overs are in the resource pack (packaging strips the voice chunks 06–16 of the other 11 languages; dm/ios/tools/testflight.sh, romfs_validate.c):
-// Simplified Chinese (8) gets the Simplified Chinese voice-over, everything else gets the English voice-over (0) — Spanish text with English voice
-static int voice_for(int lang) { return lang == 8 ? 8 : 0; }
+// 语音语言跟着文字语言走：简中（8）配简中配音，俄语（7）配俄语配音（原版 ruRU 的语音在游戏数据里：locales/audio/ruRU，1689 个文件），其余配英文配音（0）——
+// 西语等原版没有独立配音的音轨就是英文。注意：发布包里若按 dm/ios/tools/testflight.sh 裁掉配音分块 06–16（只留简中 / 英文），俄语这一行要改回按英文配，
+// 否则俄语文字配不到音轨会没声音 | 官方发布包如此，自建包从完整数据出包则俄语语音在
+// Voice language follows the text language: Simplified Chinese (8) gets its own voice-over, Russian (7) gets the Russian one (the original ruRU voice tracks are in
+// the game data: locales/audio/ruRU, 1689 files), everything else gets English (0) — Spanish and the rest have no separate voice track.
+// Note: a release package built with dm/ios/tools/testflight.sh strips voice chunks 06-16 (Chinese and English only), and then the Russian line has to fall back to
+// English again, or Russian text would have no track to play at all.
+static int voice_for(int lang) { return lang == 8 ? 8 : lang == 7 ? 7 : 0; }
 static void settings_seed(const char *save_dir) {
     const char *e = getenv("DM_TOUCH_DEFAULTS"); int on = e ? strcmp(e, "0") != 0 : TARGET_OS_IPHONE; if (!on) return;
     static const char *kv[][2] = {{"\"Item Name Display\"", "1"}, {"\"Item Tooltip Hotkey Appender\"", "0"},

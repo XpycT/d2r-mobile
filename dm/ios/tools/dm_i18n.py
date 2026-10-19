@@ -43,7 +43,7 @@ EN_LIMITS = (
 # 英文界面下也要写汉字的键（自定义页语言那一行：切错语言的人得看得懂）。只许用在指定了全球字体 BlizzardGlobal 的文字控件上——英文界面缺省字体没有汉字
 # Keys may only contain letters and digits: the layout's "@key" parsing stops at _ (@dmCustom_auto_mana was shown as "missing string_auto_mana", measured in the iOS package on a Mac)
 # Keys that must show Chinese characters in the English UI as well (the language row of the Custom page: someone who switched to the wrong language has to be able to read it). Only allowed on text controls that specify the global font BlizzardGlobal -- the default font of the English UI has no Chinese characters
-EN_HAS_ZH = {'dmCustomLang', 'dmCustomLangZh', 'dmCustomLangHintZh'}
+EN_HAS_ZH = {'dmCustomLangZh', 'dmCustomLangHintZh'}
 def rows():
     """[(键, 中文, English, Español, Español MX, Русский)]；Español MX 空 = 同 Español。 | [(key, Chinese, English, Español, Español MX, Russian)]; empty Español MX = same as Español."""
     out = []
